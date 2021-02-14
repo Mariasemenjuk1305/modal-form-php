@@ -1,7 +1,4 @@
-
-<div class="container p-4" id="modal-box">
- <h3 class="text-center mb-3">Modal form</h3>
-  <form action="./js/script.js" method="post">
+  <form action="" method="">
     <div class="form-group row">
       <label class="col-sm-2 col-form-label">First Name</label>
       <div class="col-sm-10">
@@ -34,14 +31,12 @@
         </div>
       </div>
     </div>
-    <div class="form-group row">
+    <div class="form-group row d-flex justify-content-end">
       <div class="col-sm-10">
-        <div class="alert alert-danger mt-2" id="errorBlock"></div>
-        <button type="button" class="btn btn-primary mt-3" id="submit">Add Person</button>
-        <button type="button" class="btn btn-primary mt-3 hide" id="update">Update Info</button>
+          <div class="alert-danger p-2 mt-2" style="width:100%" id="errorBlock"></div>    
       </div>
     </div>
   </form>
-</div>
+
 
 

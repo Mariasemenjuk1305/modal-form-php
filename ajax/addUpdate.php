@@ -7,11 +7,11 @@
 
   $error = '';
   if(strlen($username) <= 3)
-    $error = 'Please, enter your name';
+    $error = 'Please, tell your name!';
   else if(strlen($lastName) <= 3)
-    $error = 'Please, enter your last name';
+    $error = 'Please, tell your last name!';
   else if(strlen($isAdmin) == '')
-    $error = 'Please, choice your role';
+    $error = 'Please, choice your role!';
 
   if($error != ''){
     echo $error;
@@ -25,4 +25,5 @@
   $query = $pdo->prepare($sql);
   $query->execute([$id]);
 
+  echo 'Done';
 ?>

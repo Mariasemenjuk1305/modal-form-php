@@ -1,27 +1,28 @@
 $(document).ready(function () {
-  // показати/заховати модальне вікно
-  $('#add').click(() => {
-    $('#myModal').modal('toggle');
-    $('#update').hide();
-    $('#submit').show();
-    $('#errorBlock').hide();
+  // наповнення для модального вікна - додати користувача
+  $(document).on("click", "#newUser", function(){
+    $('#exampleModalLabel').text('Add new user');
+    $('#update').addClass('d-none');
+    $('#submit').removeClass('d-none');
+    $('form').get(0).reset();
+    $('#errorBlock').addClass('d-none');
   });
+  
   // вибрати всі checkbox
   $('#parent').click(function () {
     if (!$("#parent").is(":checked")) {
-      $(".form-check-input").removeAttr("checked");
+      $(".idNum").prop('checked', false);
     } else {
       $(".form-check-input").prop("checked", "checked");
     }
   });
   //віджати головний checkbox, якщо хоч один вибраний
   $(document).on("click", ".idNum", function(){
-    $("#parent").removeAttr("checked");
+    $("#parent").prop('checked', false);
   });
 
   //додати користувача
   $('#submit').click(function () {
-    $('#errorBlock').hide();
     let username = $('#name').val();
     let lastName = $('#lastName').val();
     let isAdmin = $('#admin').val();
@@ -44,21 +45,31 @@ $(document).ready(function () {
       dataType: 'html',
       success: function (data) {
         if (data == 'Done') {
-          $('#errorBlock').hide();
-          location.reload(true);
-        } else {
-          $('#errorBlock').show();
-          $('#errorBlock').text(data);
-          alert(data);
+          $('#add').modal('hide');
+          // конфірм підтвердження
+          $('#confirm').modal('show');
+          $('#errorBlock').addClass('d-none');
+          $('#condirmTitle').text('Add new User');
+          $('#confirmText').text('User is successfully added!');
+          $('#agree').text('Ok');
+          $('.for-info').click(()=>{
+            location.reload(true);
+          });
+        } else { 
+            //показувати помилку
+            $('#errorBlock').removeClass('d-none');
+            $('#errorBlock').text(data);
         }
       }
     });
   });
 
-  //видалити юзера 
+  //видалити користувача 
   $(document).on("click", ".delete", function(){
-      let ask = confirm('Ви справді хочете видалити користувача?');
-      if(ask){
+      $('#condirmTitle').text('Delete User');
+      $('#confirmText').text('Are you sure you want to delete this user?');
+      $('#agree').text('Delete');
+      $('#agree').click(()=>{
         let id = $(this).data("id");
         $.ajax({
             url: "./ajax/deletePerson.php",
@@ -66,23 +77,26 @@ $(document).ready(function () {
             data: {'id': id},
             success: () =>
             {
-               alert('Користувача видалено!');
-               location.reload(true);
+              //конфірм підтвердження
+              $('#condirmTitle').text('User delete!');
+              $('#confirmText').text('User is successfully deleted!');
+              $('#agree').text('Ok');
+              $('.for-info').click(()=>{
+                location.reload(true);
+              });
             }
         });
-      }else{
-        return false;
-      }
+      });  
   });
 
   //редагувати дані юзера 
   $(document).on("click", ".edit", function(){
     let id = $(this).data("id");
     // показати/заховати модальне вікно
-    $('#myModal').modal('toggle');
-    $('#submit').hide();
-    $('#errorBlock').hide();
-    $('#update').show();
+    $('#update').removeClass('d-none');
+    $('#submit').addClass('d-none');
+    $('#exampleModalLabel').text('Edit user`s info')
+    $('#errorBlock').addClass('d-none');
     $.ajax({
         url: "./ajax/updatePerson.php",
         type: "POST",
@@ -103,12 +117,8 @@ $(document).ready(function () {
     });
   });
 
-  //update дані з таблиці mysql
-  $('#update').click(function () {
-    $('#myModal').modal('toggle');
-    $('#update').show();
-    $('#submit').hide();
-    
+  //update дані в таблиці mysql
+  $('#update').click(function () { 
     let idUser = $('#idUser').val();
     let username = $('#name').val();
     let lastName = $('#lastName').val();
@@ -119,7 +129,6 @@ $(document).ready(function () {
     } else {
       isActive = false;
     };
-    location.reload(true);
     
     $.ajax({
       url: './ajax/addUpdate.php',
@@ -134,13 +143,20 @@ $(document).ready(function () {
       },
       dataType: 'html',
       success: function (data) {
-        if (data == false) {
-          $('#active').attr('checked', false)
-          $('#errorBlock').hide();
-          $('form').trigger('reset');
-          alert('Дані користувача оновлені!')
+        if (data == 'Done') {
+          $('#active').attr('checked', false);
+          //для конфірму
+          $('#add').modal('hide');
+          $('#confirm').modal('show');
+          $('#condirmTitle').text('Update User');
+          $('#confirmText').text('User`s info is successfully updated!');
+          $('#agree').text('Ok');
+          $('.for-info').click(()=>{
+            location.reload(true);
+          });  
         } else {
-          $('#errorBlock').show();
+          //показавати помилку
+          $('#errorBlock').removeClass('d-none');
           $('#errorBlock').text(data);
         }
       }
@@ -148,94 +164,126 @@ $(document).ready(function () {
   });
 
   // Згідно із значенням селекту
-  $('#ok').click(function(){  
-    let select = $('#select').val();
-    let checkElem = [];
-    if(checkElem.length == 0){
-      alert('Немає обраних користувачів');
+  $('.ok').click(function(){  
+    //яке значення  селекту було вибране
+    let select;
+    if($('select[name="firstSel"]').val()){
+       select = $('select[name="firstSel"]').val();
+    }else if($('select[name="secondSel"]').val()){
+      select = $('select[name="secondSel"]').val();
     }else{
-      $('.idNum').map((element, index) => {
-        if(index.checked){
-          checkElem.push(index.value);
-        }
-      });
+      $('#confirm').modal('show');
+      $('#condirmTitle').text('Select actions');
+      $('#confirmText').text('You have to select some actions');
+      $('#agree').text('Ok');
+      $('#agree').click(()=>{$('#confirm').modal('hide');});
     }
-  
-    //видалити кількох користувачів
-    if(select == 'delete'){
-      let ask = confirm('Ви впевнені, що хочете видалити користувачів?');
-      if(ask){
-        $.ajax({
-          url: './ajax/deleteFewUsers.php',
-          type: "POST",
-          cache: false,
-          data: {'checkElem':checkElem},
-          success: () => {
-            alert('Користувачі видалені');
-            location.reload(true);
-          }
-        });
-      };
-    }else{
-      return false;
-    }
-    //сортувати активний/неактивний
+    //очистити значення селекту
+    $('select').each(()=>{
+      $('select').val('');
+    })
     if (select == 'active'){
       select = true;
     }
     if(select == 'notActive'){
       select = false;
     }
-    console.log(select);
-        $.ajax({
-            url: './ajax/selectPart.php',
+
+    //котрі з checkbox вибрані  
+    let checkElem = [];
+    $('.idNum').map((element, index) => {
+      if(index.checked){
+        checkElem.push(index.value);
+      }
+    }); 
+    
+    //видалити кількох користувачів
+    if(select == 'delete' && checkElem.length>0){
+      if(checkElem.length != 0){
+        $('#confirm').modal('show');
+        $('#condirmTitle').text('Delete User');
+        $('#confirmText').text('Are you sure you want to delete this user(s)?');
+        $('#agree').text('Delete');
+        $('#agree').click(function(){
+          $.ajax({
+            url: './ajax/deleteFewUsers.php',
             type: "POST",
             cache: false,
-            data: {'select': select,
-                   'checkElem':checkElem},
-            success: (data) => {
-              data = JSON.parse(data);
-              let str;
-              console.log(data);
-              let count = 1;
-              for (let i=0; i<data.length; i++){ 
-                for(let j=0; j<data[i].length; j++){
-                  let status;
-                  if (data[i][j].status == 'true'){
-                      status = '<img class="isActive" src="./img/active.png" alt="active">';
-                  };
-                  if (data[i][j].status == 'false'){
-                    status = '<img class="isActive" src="./img/notActive.png" alt="not active">';
-                  };
-                   str += `<tr>
-                                  <td scope="row">${count}</td>
-                                  <td scope="col"><input name="check" type="checkbox" class="form-check-input idNum" value="${data[i].id}" id="child"></td>
-                                  <td>${data[i][j].name}</td>
-                                  <td>${data[i][j].lastname}</td>
-                                  <td>${status}</td>     
-                                  <td>${data[i][j].role}</td>
-                                  <td style="width: 20%;">
-                                    <a href="#" onClick="return false"
-                                      class="edit table-link" data-id="${data[i][j].id}">
-                                      <span class="fa-stack">
-                                        <i class="fa fa-square fa-stack-2x"></i> 
-                                        <i class="fa fa-pencil fa-stack-1x fa-inverse"></i>
-                                      </span>
-                                    </a>
-                                    <a href="#" onClick="return false"
-                                    class="delete table-link danger" data-id="${data[i][j].id}">
-                                      <span class="fa-stack">
-                                        <i class="fa fa-square fa-stack-2x"></i>
-                                        <i class="fa fa-trash-o fa-stack-1x fa-inverse"></i>
-                                      </span>
-                                    </a>
-                                  </td>
-                                  </tr>`;
-                  count++;
-                }
-              };
-              $('tbody').html(str);
+            data: {'checkElem':checkElem},
+            success: () => {
+              $('#condirmTitle').text('Delete User');
+              $('#confirmText').text('User`s is successfully deleted!');
+              $('#agree').text('Ok');
+              $('.for-info').click(()=>{
+                location.reload(true);
+              });  
             }
+          });
         });
+      }
+    }else if(select == 'delete' && checkElem.length == 0){
+      $('#confirm').modal('show');
+      $('#condirmTitle').text('Delect users');
+      $('#confirmText').text('You have to select some users');
+      $('#agree').text('Ok');
+      $('#agree').click(()=>{$('#confirm').modal('hide');});
+    }else{
+    //сортувати активний/неактивний 
+      $.ajax({
+        url: './ajax/selectPart.php',
+        type: "POST",
+        cache: false,
+        data: {'select': select,
+                'checkElem':checkElem},
+        success: (data) => {
+          data = JSON.parse(data);
+          let str;
+          let count = 1;
+          for (let i=0; i<data.length; i++){ 
+            for(let j=0; j<data[i].length; j++){
+              let status;
+              if (data[i][j].status == 'true'){
+                  status = '<img class="isActive" src="./img/active.png" alt="active">';
+              };
+              if (data[i][j].status == 'false'){
+                status = '<img class="isActive" src="./img/notActive.png" alt="not active">';
+              };
+                str += `<tr>
+                              <td scope="row">${count}</td>
+                              <td scope="col"><input name="check" type="checkbox" 
+                                class="form-check-input idNum" value="${data[i][j].id}" id="child">
+                              </td>
+                              <td>${data[i][j].name}</td>
+                              <td>${data[i][j].lastname}</td>
+                              <td>${status}</td>     
+                              <td>${data[i][j].role}</td>
+                              <td style="width: 20%;">
+                                <a href="#" onClick="return false"
+                                  class="edit table-link" data-id="${data[i][j].id}" 
+                                  data-toggle="modal"
+                                  data-target="#add">
+                                  <span class="fa-stack">
+                                    <i class="fa fa-square fa-stack-2x"></i> 
+                                    <i class="fa fa-pencil fa-stack-1x fa-inverse"></i>
+                                  </span>
+                                </a>
+                                <a href="#" onClick="return false"
+                                  class="delete table-link danger" data-id="${data[i][j].id}" 
+                                  data-toggle="modal" 
+                                  data-target="#confirm">
+                                  <span class="fa-stack">
+                                    <i class="fa fa-square fa-stack-2x"></i>
+                                    <i class="fa fa-trash-o fa-stack-1x fa-inverse"></i>
+                                  </span>
+                                </a>
+                              </td>
+                              </tr>`;
+              count++;
+            }
+          };
+          $('tbody').html(str);
+        }
       });
+    }     
+  });
 });

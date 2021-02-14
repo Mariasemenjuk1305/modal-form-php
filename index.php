@@ -5,39 +5,63 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="">
-
+    <!-- файли bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+    <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"> -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <!-- підключення іконок edit/delete -->
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+    <!-- внутрішній файл .css -->
     <link rel="stylesheet" href="css/style.css">
     <title>Task_3 Modal Form</title>
 </head>
 
 <body>
-      <div class="container mt-3">
-         <div class="d-flex justify-content-center">
-            <button id="add" type="button" class="btn btn-primary btn-lg col-2 m-1 p-1" data-toggle="modal"
-            data-target=".bd-example-modal-lg">Add</button>
-            <select id="select" class="btn-lg col-2 m-1 pt-1 pb-2" required>
-                <option selected disabled value="">Please select</option>
-                <option value="active">Set active</option>
-                <option value="notActive">Set not active</option>
-                <option value="delete">Delete</option>
-              </select>
-            <button id="ok" type="button" class="btn btn-secondary btn-lg col-2 m-1 p-1" data-toggle="modal">Ok</button>
-          </div>
-          <!-- модальне вікно -->
-          <div id="myModal" class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog"
-              aria-labelledby="myLargeModalLabel" aria-hidden="true">
-              <div class="modal-dialog modal-lg" role="document">
-                  <div class="modal-content">
-                    <?php require 'blocks/modal.php'?>
+    <div class="container">
+      <!-- блок керування -->
+      <div class="d-flex justify-content-start m-4">
+         <button id="newUser" type="button" class="btn btn-primary btn-sm col-1 m-1" data-toggle="modal"
+            data-target="#add">Add User</button>
+              <select name="firstSel" class="btn-sm col-2 m-1" required>
+                  <option selected disabled value="">Please select</option>
+                  <option value="active">Set active</option>
+                  <option value="notActive">Set not active</option>
+                  <option value="delete">Delete</option>
+                </select>
+              <button id="ok" type="button" class="btn btn-sm btn-secondary col-1 m-1 ok">Ok</button>
+      </div>
+
+   
+          <!-- модальне вікно додати/редагувати користувача -->
+        <div id="add" class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog"
+                    aria-labelledby="myLargeModalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-lg" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLabel">Add new user</h5>
+                  <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close">
+                    <!-- <span aria-hidden="true">&times;</span> -->
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <form>
+                     <?php require 'blocks/modal.php'?>
+                  </form>
+                </div>
+                  <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal" aria-label="Close">Close</button>
+                      <button type="button" class="btn btn-primary" id="submit">Add</button>
+                      <button type="button" class="btn btn-primary d-none" id="update">Save</button>
                   </div>
               </div>
           </div>
+        </div>
         <!-- таблиця з даними -->
-        <table class="table text-center mt-4">
+        <table class="table text-center m-3">
           <thead>
             <tr>
               <th scope="col">#</th>
@@ -50,16 +74,50 @@
             </tr>
           </thead>
           <tbody>
-            <?= require 'blocks/table.php' ?>
+              <?= require 'blocks/table.php' ?>
           </tbody>
         </table>
+      <!-- блок керування -->
+      <div class="d-flex justify-content-start m-4">
+         <button id="newUser" type="button" class="btn btn-primary btn-sm col-1 m-1" data-toggle="modal"
+            data-target="#add">Add User</button>
+              <select name="secondSel" class="btn-sm col-2 m-1" required>
+                  <option selected disabled value="">Please select</option>
+                  <option value="active">Set active</option>
+                  <option value="notActive">Set not active</option>
+                  <option value="delete">Delete</option>
+                </select>
+              <button id="ok" type="button" class="btn btn-sm btn-secondary col-1 m-1 ok">Ok</button>
+      </div>
+       
     </div>
-   
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW"
-        crossorigin="anonymous"></script>
+
+
+       <!-- конфірми -->
+       <div class="modal fade" id="confirm" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="condirmTitle"></h5>
+                <button type="button" class="btn-close for-info" data-dismiss="modal" aria-label="Close">
+                  <!-- <span aria-hidden="true">&times;</span> -->
+                </button>
+              </div>
+              <div class="modal-body" id="confirmText">
+                ...
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary for-info" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary for-info" id="agree">Save changes</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script> -->
+    
+ 
     <script type="text/javascript" src="js/script.js"></script>
 </body>
 </html>

@@ -6,11 +6,11 @@
 
   $error = '';
   if(strlen($username) <= 3)
-    $error = 'Будь ласка, вкажіть Ваше ім\'я';
+    $error = 'Please, tell your name!';
   else if(strlen($lastName) <= 3)
-    $error = 'Будь ласка, вкажіть Ваше прізвище';
+    $error = 'Please, tell your last name!';
   else if(strlen($isAdmin) == '')
-    $error = 'Будь ласка, вкажіть Вашу роль';
+    $error = 'Please, choice your role!';
 
   if($error != ''){
     echo $error;
