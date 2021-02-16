@@ -19,7 +19,20 @@ $(document).ready(function () {
   //віджати головний checkbox, якщо хоч один вибраний
   $(document).on("click", ".idNum", function(){
     $("#parent").prop('checked', false);
+    ifAllCheckCheched()
   });
+  // присвоїти checked головному checkbox якщо всі вибрані
+  function ifAllCheckCheched(){
+    let a = [];
+    $('.idNum').each(function(){
+      if($(this).is(":checked")){
+        a.push($(this))
+      };
+    });
+    if (a.length == $('.idNum').length){
+      $("#parent").prop('checked', true);
+    };
+  };  
 
   //додати користувача
   $('#submit').click(function () {
@@ -51,7 +64,6 @@ $(document).ready(function () {
           $('#errorBlock').addClass('d-none');
           $('#condirmTitle').text('Add new User');
           $('#confirmText').text('User is successfully added!');
-          $('#agree').text('Ok');
           $('.for-info').click(()=>{
             location.reload(true);
           });
@@ -68,7 +80,6 @@ $(document).ready(function () {
   $(document).on("click", ".delete", function(){
       $('#condirmTitle').text('Delete User');
       $('#confirmText').text('Are you sure you want to delete this user?');
-      $('#agree').text('Delete');
       $('#agree').click(()=>{
         let id = $(this).data("id");
         $.ajax({
@@ -80,7 +91,6 @@ $(document).ready(function () {
               //конфірм підтвердження
               $('#condirmTitle').text('User delete!');
               $('#confirmText').text('User is successfully deleted!');
-              $('#agree').text('Ok');
               $('.for-info').click(()=>{
                 location.reload(true);
               });
@@ -150,7 +160,6 @@ $(document).ready(function () {
           $('#confirm').modal('show');
           $('#condirmTitle').text('Update User');
           $('#confirmText').text('User`s info is successfully updated!');
-          $('#agree').text('Ok');
           $('.for-info').click(()=>{
             location.reload(true);
           });  
@@ -164,18 +173,18 @@ $(document).ready(function () {
   });
 
   // Згідно із значенням селекту
-  $('.ok').click(function(){  
+  $(document).on("click", ".ok", function(){ 
     //яке значення  селекту було вибране
+    let nameButton = $(this).prop('name');
     let select;
-    if($('select[name="firstSel"]').val()){
-       select = $('select[name="firstSel"]').val();
-    }else if($('select[name="secondSel"]').val()){
-      select = $('select[name="secondSel"]').val();
+    if($('select[name="firstSel"]').val() && nameButton == 'firstSel'){
+        select = $('select[name="firstSel"]').val();
+    }else if($('select[name="secondSel"]').val() && nameButton == 'secondSel'){
+        select = $('select[name="secondSel"]').val();
     }else{
       $('#confirm').modal('show');
       $('#condirmTitle').text('Select actions');
       $('#confirmText').text('You have to select some actions');
-      $('#agree').text('Ok');
       $('#agree').click(()=>{$('#confirm').modal('hide');});
     }
     //очистити значення селекту
@@ -198,92 +207,50 @@ $(document).ready(function () {
     }); 
     
     //видалити кількох користувачів
-    if(select == 'delete' && checkElem.length>0){
-      if(checkElem.length != 0){
-        $('#confirm').modal('show');
-        $('#condirmTitle').text('Delete User');
-        $('#confirmText').text('Are you sure you want to delete this user(s)?');
-        $('#agree').text('Delete');
-        $('#agree').click(function(){
-          $.ajax({
-            url: './ajax/deleteFewUsers.php',
-            type: "POST",
-            cache: false,
-            data: {'checkElem':checkElem},
-            success: () => {
-              $('#condirmTitle').text('Delete User');
-              $('#confirmText').text('User`s is successfully deleted!');
-              $('#agree').text('Ok');
-              $('.for-info').click(()=>{
-                location.reload(true);
-              });  
-            }
+    if(checkElem.length != 0){
+      if(select == 'delete'){
+          $('#confirm').modal('show');
+          $('#condirmTitle').text('Delete User');
+          $('#confirmText').text('Are you sure you want to delete this user(s)?');
+          $('#agree').click(function(){
+            $.ajax({
+              url: './ajax/deleteFewUsers.php',
+              type: "POST",
+              cache: false,
+              data: {'checkElem':checkElem},
+              success: () => {
+                $('#condirmTitle').text('Delete User');
+                $('#confirmText').text('User`s is successfully deleted!');
+                $('#agree').text('Ok');
+                $('.for-info').click(()=>{
+                  location.reload(true);
+                });  
+              }
+            });
           });
+        }else if(select == true || select == false){
+       //сортувати активний/неактивний 
+        $.ajax({
+          url: './ajax/selectPart.php',
+          type: "POST",
+          cache: false,
+          data: {'select': select,
+                  'checkElem':checkElem},
+          success: (data) => {
+            $('#confirm').modal('show');
+            $('#condirmTitle').text('Update user`s status');
+            $('#confirmText').text('User`s is successfully updeted!');
+            $('.for-info').click(()=>{
+              location.reload(true);
+            }); 
+          }
         });
-      }
-    }else if(select == 'delete' && checkElem.length == 0){
-      $('#confirm').modal('show');
-      $('#condirmTitle').text('Delect users');
-      $('#confirmText').text('You have to select some users');
-      $('#agree').text('Ok');
-      $('#agree').click(()=>{$('#confirm').modal('hide');});
+      }else{ return false};
     }else{
-    //сортувати активний/неактивний 
-      $.ajax({
-        url: './ajax/selectPart.php',
-        type: "POST",
-        cache: false,
-        data: {'select': select,
-                'checkElem':checkElem},
-        success: (data) => {
-          data = JSON.parse(data);
-          let str;
-          let count = 1;
-          for (let i=0; i<data.length; i++){ 
-            for(let j=0; j<data[i].length; j++){
-              let status;
-              if (data[i][j].status == 'true'){
-                  status = '<img class="isActive" src="./img/active.png" alt="active">';
-              };
-              if (data[i][j].status == 'false'){
-                status = '<img class="isActive" src="./img/notActive.png" alt="not active">';
-              };
-                str += `<tr>
-                              <td scope="row">${count}</td>
-                              <td scope="col"><input name="check" type="checkbox" 
-                                class="form-check-input idNum" value="${data[i][j].id}" id="child">
-                              </td>
-                              <td>${data[i][j].name}</td>
-                              <td>${data[i][j].lastname}</td>
-                              <td>${status}</td>     
-                              <td>${data[i][j].role}</td>
-                              <td style="width: 20%;">
-                                <a href="#" onClick="return false"
-                                  class="edit table-link" data-id="${data[i][j].id}" 
-                                  data-toggle="modal"
-                                  data-target="#add">
-                                  <span class="fa-stack">
-                                    <i class="fa fa-square fa-stack-2x"></i> 
-                                    <i class="fa fa-pencil fa-stack-1x fa-inverse"></i>
-                                  </span>
-                                </a>
-                                <a href="#" onClick="return false"
-                                  class="delete table-link danger" data-id="${data[i][j].id}" 
-                                  data-toggle="modal" 
-                                  data-target="#confirm">
-                                  <span class="fa-stack">
-                                    <i class="fa fa-square fa-stack-2x"></i>
-                                    <i class="fa fa-trash-o fa-stack-1x fa-inverse"></i>
-                                  </span>
-                                </a>
-                              </td>
-                              </tr>`;
-              count++;
-            }
-          };
-          $('tbody').html(str);
-        }
-      });
+      $('#confirm').modal('show');
+      $('#condirmTitle').text('Actions for few users');
+      $('#confirmText').text('You have to select some users');
+      $('#agree').click(()=>{$('#confirm').modal('hide');});
     }     
   });
 });

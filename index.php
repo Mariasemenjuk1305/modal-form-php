@@ -32,7 +32,7 @@
                   <option value="notActive">Set not active</option>
                   <option value="delete">Delete</option>
                 </select>
-              <button id="ok" type="button" class="btn btn-sm btn-secondary col-1 m-1 ok">Ok</button>
+              <button id="ok" name="firstSel" type="button" class="btn btn-sm btn-secondary col-1 m-1 ok">Ok</button>
       </div>
 
    
@@ -87,12 +87,10 @@
                   <option value="notActive">Set not active</option>
                   <option value="delete">Delete</option>
                 </select>
-              <button id="ok" type="button" class="btn btn-sm btn-secondary col-1 m-1 ok">Ok</button>
+              <button id="ok" name="secondSel" type="button" class="btn btn-sm btn-secondary col-1 m-1 ok">Ok</button>
       </div>
        
     </div>
-
-
 
        <!-- конфірми -->
        <div class="modal fade" id="confirm" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static">
@@ -108,8 +106,8 @@
                 ...
               </div>
               <div class="modal-footer">
-                <button type="button" class="btn btn-secondary for-info" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary for-info" id="agree">Save changes</button>
+                <!-- <button type="button" class="btn btn-secondary for-info" data-dismiss="modal">Close</button> -->
+                <button type="button" class="btn btn-primary for-info" id="agree">Ok</button>
               </div>
             </div>
           </div>
