@@ -121,16 +121,7 @@ $(document).ready(function () {
         if (data == 'Done') {
           //перемалювати таблицю
           paintTable();
-
           $('#add').modal('hide'); 
-          //конфірм підтвердження
-          $('#confirm').modal('show');
-          $('#errorBlock').addClass('d-none');
-          $('#condirmTitle').text('Add new User');
-          $('#confirmText').text('User is successfully added!');
-          $('.for-info').click(()=>{
-            $('#confirm').modal('hide');
-          }); 
         } else { 
             //показувати помилку
             $('#errorBlock').removeClass('d-none');
@@ -154,12 +145,6 @@ $(document).ready(function () {
             {
               //перемалювати таблицю
               paintTable();
-              //конфірм підтвердження
-              $('#condirmTitle').text('User delete!');
-              $('#confirmText').text('User is successfully deleted!');
-              $('.for-info').click(()=>{
-                $('#confirm').modal('hide');
-              });
             }
         });
       });  
@@ -183,10 +168,10 @@ $(document).ready(function () {
           $('#idUser').val(arr[0]['id']);
           $('#name').val(arr[0]['name']);
           $('#lastName').val(arr[0]['lastname']);
-          if(arr[0]['status'] === 'true'){
-            $('#active').attr('checked', true)
+          if(arr[0]['status'] == 'true'){
+            $('#active').prop('checked', true)
           }else{
-            $('#active').attr('checked', false)
+            $('#active').prop('checked', false)
           };
           $('#admin').val(arr[0]['role']);
         }
@@ -199,12 +184,7 @@ $(document).ready(function () {
     let username = $('#name').val();
     let lastName = $('#lastName').val();
     let isAdmin = $('#admin').val();
-    let isActive;
-    if ($('#active').attr('checked', true)) {
-      isActive = true;
-    } else {
-      isActive = false;
-    };
+    let isActive = $('#active').prop('checked');
     
     $.ajax({
       url: './ajax/addUpdate.php',
@@ -222,16 +202,7 @@ $(document).ready(function () {
         if (data == 'Done') {
           //перемалювати таблицю
           paintTable();
-
-          $('#active').attr('checked', false);
-          //для конфірму
           $('#add').modal('hide');
-          $('#confirm').modal('show');
-          $('#condirmTitle').text('Update User');
-          $('#confirmText').text('User`s info is successfully updated!');
-          $('.for-info').click(()=>{
-            $('#confirm').modal('hide');
-          });  
         } else {
           //показавати помилку
           $('#errorBlock').removeClass('d-none');
@@ -313,13 +284,6 @@ $(document).ready(function () {
           success: (data) => {
             //перемалювати таблицю
             paintTable();
-            // конфірм підтвердження
-            $('#confirm').modal('show');
-            $('#condirmTitle').text('Update user`s status');
-            $('#confirmText').text('User`s is successfully updeted!');
-            $('.for-info').click(()=>{
-              $('#confirm').modal('hide');
-            }); 
               //очистити значення селекту
             $('select').each(()=>{
               $('select').val('');
