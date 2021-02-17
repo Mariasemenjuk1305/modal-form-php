@@ -143,6 +143,10 @@ $(document).ready(function () {
             data: {'id': id},
             success: () =>
             {
+              //Закрити конфірм
+              $('.for-info').click(()=>{
+                $('#confirm').modal('hide');
+              }); 
               //перемалювати таблицю
               paintTable();
             }
