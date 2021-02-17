@@ -23,7 +23,6 @@
   $sql = 'INSERT INTO users(name, lastname, status, role) VALUES(?, ?, ?, ?)';
   $query = $pdo->prepare($sql);
   $query->execute([$username, $lastName, $activePerson, $isAdmin]);
-
   echo 'Done';
 
  ?>

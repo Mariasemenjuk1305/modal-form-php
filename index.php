@@ -74,7 +74,8 @@
             </tr>
           </thead>
           <tbody>
-              <?= require 'blocks/table.php' ?>
+            
+
           </tbody>
         </table>
       <!-- блок керування -->
