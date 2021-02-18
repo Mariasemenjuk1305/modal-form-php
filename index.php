@@ -107,8 +107,9 @@
                 ...
               </div>
               <div class="modal-footer">
-                <button type="button" class="btn btn-secondary for-info fade" data-dismiss="modal" aria-label="Close" id="cancel">Cencel</button>
-                <button type="button" class="btn btn-primary for-info" id="agree">Delete</button>
+                <button type="button" class="btn btn-secondary for-info fade" data-dismiss="modal" aria-label="Close" id="cancel">Cancel</button>
+                <button type="button" class="btn btn-primary for-info" id="agree">Ok</button>
+                <button type="button" class="btn btn-primary for-info" id="delete">Delete</button>
               </div>
             </div>
           </div>

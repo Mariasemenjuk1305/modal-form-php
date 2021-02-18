@@ -122,6 +122,7 @@ $(document).ready(function () {
           //перемалювати таблицю
           paintTable();
           $('#add').modal('hide'); 
+          $("#parent").prop('checked', false);
         } else { 
             //показувати помилку
             $('#errorBlock').removeClass('d-none');
@@ -136,8 +137,9 @@ $(document).ready(function () {
       $('#condirmTitle').text('Delete User');
       $('#confirmText').text('Are you sure you want to delete this user?');
       $('#cancel').removeClass('fade');
-      $('#agree').text('Delete');
-      $('#agree').click(()=>{
+      $('#delete').removeClass('d-none');
+      $('#agree').addClass('d-none');
+      $('#delete').click(()=>{
         let id = $(this).data("id");
         $.ajax({
             url: "./ajax/deletePerson.php",
@@ -147,6 +149,8 @@ $(document).ready(function () {
             {
               //Закрити конфірм
                 $('#confirm').modal('hide');
+                $("#parent").prop('checked', false);
+
               //перемалювати таблицю
               paintTable();
             }
@@ -207,6 +211,7 @@ $(document).ready(function () {
           //перемалювати таблицю
           paintTable();
           $('#add').modal('hide');
+          $("#parent").prop('checked', false);
         } else {
           //показавати помилку
           $('#errorBlock').removeClass('d-none');
@@ -228,7 +233,8 @@ $(document).ready(function () {
     }else{
       $('#confirm').modal('show');
       $('#cancel').addClass('fade');
-      $('#agree').text('Ok');
+      $('#delete').addClass('d-none');
+      $('#agree').removeClass('d-none');
       $('#condirmTitle').text('Select actions');
       $('#confirmText').text('You have to select some actions');
       $('#agree').click(()=>{$('#confirm').modal('hide');});
@@ -255,9 +261,10 @@ $(document).ready(function () {
           $('#confirm').modal('show');
           $('#condirmTitle').text('Delete User');
           $('#confirmText').text('Are you sure you want to delete this user(s)?');
+          $('#agree').addClass('d-none');
+          $('#delete').removeClass('d-none');
           $('#cancel').removeClass('fade');
-          $('#agree').text('Delete');
-          $('#agree').click(function(){
+          $('#delete').click(function(){
             $.ajax({
               url: './ajax/deleteFewUsers.php',
               type: "POST",
@@ -267,13 +274,8 @@ $(document).ready(function () {
                 //перемалювати таблицю
                 paintTable();
                 //конфірм підтвердження
-                // $('#condirmTitle').text('Delete User');
-                // $('#confirmText').text('User`s is successfully deleted!');
-                // $('#agree').text('Ok');
-                // $('#cancel').addClass('fade');
-                // $('.for-info').click(()=>{
-                   $('#confirm').modal('hide');
-                // });  
+                  $("#parent").prop('checked', false);  
+                  $('#confirm').modal('hide'); 
                 //очистити значення селекту
                 $('select').each(()=>{
                   $('select').val('');
@@ -304,10 +306,14 @@ $(document).ready(function () {
     }else{
       $('#confirm').modal('show');
       $('#cancel').addClass('fade');
-      $('#agree').text('Ok');
+
+      $('#delete').addClass('d-none');
+      $('#agree').removeClass('d-none');
       $('#condirmTitle').text('Actions for few users');
       $('#confirmText').text('You have to select some users');
       $('#agree').click(()=>{$('#confirm').modal('hide');});
+      $("#parent").prop('checked', false);
+
     }     
   });
 });
