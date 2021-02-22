@@ -9,11 +9,17 @@
             $query = $pdo->prepare($sql);
             $query->execute(['status'=>$select,
                               'id'=>$val]);
-            $result = $query->fetchAll(PDO::FETCH_OBJ);
         };
-        echo 'Done';
+        echo json_encode(array(
+            'result' => true,
+            'data' => 1, 
+          ));
     }else{
-        echo false;
+        $error = $pdo->errorInfo();
+        echo json_encode(array(
+            'result' => false,
+            'data' => "Couldn't update!\n ". "SQL Error={$error[0]}, DB Error={$error[1]} " . "Message={$error[2]}\n", 
+        ));
     };
     
     

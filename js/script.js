@@ -47,18 +47,21 @@ $(document).ready(function () {
       data: {},
       dataType: 'html',
       success: function (data) {
-        let result = JSON.parse(data);
-        let str = '';
-        let count = 1;
-        for(let i=0; i<result.length; i++){
-          str += addTr(result[i], count);
-          count++;
-        }
-        $('tbody').html(str);
+        let res = JSON.parse(data);
+        if (res.result === true) {
+          let str = '';
+          let count = 1;
+          for(let i=0; i<res.data.length; i++){
+            str += addTr(res.data[i], count);
+            count++;
+          }
+          $('tbody').html(str);
+        }else{
+          $('body').html(res.data);
+        } 
       }
     });
   };
-  paintTable();
 
   // наповнення для модального вікна - додати користувача
   $(document).on("click", "#newUser", function(){
@@ -118,15 +121,16 @@ $(document).ready(function () {
       },
       dataType: 'html',
       success: function (data) {
-        if (data == 'Done') {
+        let res = JSON.parse(data);
+        if (res.result === true) {
+          $('#errorBlock').addClass('d-none');
           //перемалювати таблицю
           paintTable();
           $('#add').modal('hide'); 
           $("#parent").prop('checked', false);
-        } else { 
-            //показувати помилку
-            $('#errorBlock').removeClass('d-none');
-            $('#errorBlock').text(data);
+        }else{
+          $('#errorBlock').removeClass('d-none');
+          $('#errorBlock').text(res.data);
         }
       }
     });
@@ -145,14 +149,17 @@ $(document).ready(function () {
             url: "./ajax/deletePerson.php",
             type: "POST",
             data: {'id': id},
-            success: () =>
-            {
-              //Закрити конфірм
-                $('#confirm').modal('hide');
-                $("#parent").prop('checked', false);
-
-              //перемалювати таблицю
-              paintTable();
+            success: (data) =>{
+              let res = JSON.parse(data);
+              if (res.result == true) {
+                //Закрити конфірм
+                  $('#confirm').modal('hide');
+                  $("#parent").prop('checked', false);
+                //перемалювати таблицю
+                paintTable();
+              }else{
+                $('body').html(res.data);
+              }
             }
         });
       });  
@@ -170,18 +177,23 @@ $(document).ready(function () {
         url: "./ajax/updatePerson.php",
         type: "POST",
         data: {'id': id},
-        success: function(result){
-          let arr = JSON.parse(result);
-          //console.log(arr[0]);
-          $('#idUser').val(arr[0]['id']);
-          $('#name').val(arr[0]['name']);
-          $('#lastName').val(arr[0]['lastname']);
-          if(arr[0]['status'] == 'true'){
-            $('#active').prop('checked', true)
+        success: function(data){
+          let res = JSON.parse(data);
+          if (res.result == true) {
+            //console.log(arr[0]);
+            $('#idUser').val(res.data[0]['id']);
+            $('#name').val(res.data[0]['name']);
+            $('#lastName').val(res.data[0]['lastname']);
+            if(res.data[0]['status'] == 'true'){
+              $('#active').prop('checked', true)
+            }else{
+              $('#active').prop('checked', false)
+            };
+            $('#admin').val(res.data[0]['role']);
           }else{
-            $('#active').prop('checked', false)
-          };
-          $('#admin').val(arr[0]['role']);
+            $('body').html(res.data);
+          }
+        
         }
     });
   });
@@ -207,15 +219,16 @@ $(document).ready(function () {
       },
       dataType: 'html',
       success: function (data) {
-        if (data == 'Done') {
+        let res = JSON.parse(data);
+        if (res.result == true) {
+          $('#errorBlock').addClass('d-none');
           //перемалювати таблицю
           paintTable();
-          $('#add').modal('hide');
+          $('#add').modal('hide'); 
           $("#parent").prop('checked', false);
-        } else {
-          //показавати помилку
+        }else{
           $('#errorBlock').removeClass('d-none');
-          $('#errorBlock').text(data);
+          $('#errorBlock').text(res.data);
         }
       }
     });
@@ -270,17 +283,22 @@ $(document).ready(function () {
               type: "POST",
               cache: false,
               data: {'checkElem':checkElem},
-              success: () => {
-                //перемалювати таблицю
-                paintTable();
-                //конфірм підтвердження
+              success: (data) => {
+                let res = JSON.parse(data);
+                if (res.result == true) {
+                  //перемалювати таблицю
+                  paintTable();
+                  //конфірм підтвердження
                   $("#parent").prop('checked', false);  
                   $('#confirm').modal('hide'); 
-                //очистити значення селекту
-                $('select').each(()=>{
-                  $('select').val('');
-                });
-                //$('#parent').prop('checked', false);
+                  //очистити значення селекту
+                  $('select').each(()=>{
+                    $('select').val('');
+                  });
+                  $('#parent').prop('checked', false);
+                }else{
+                  $('body').html(res.data);
+                }
               }
             });
           });
@@ -293,13 +311,18 @@ $(document).ready(function () {
           data: {'select': select,
                   'checkElem':checkElem},
           success: (data) => {
-            //перемалювати таблицю
-            paintTable();
+            let res = JSON.parse(data);
+            if (res.result == true) {
+              //перемалювати таблицю
+              paintTable();
               //очистити значення селекту
-            $('select').each(()=>{
-              $('select').val('');
-            });
-            //$('#parent').prop('checked', false);
+              $('select').each(()=>{
+                $('select').val('');
+              });
+              $('#parent').prop('checked', false);
+            }else{
+              $('body').html(res.data);
+            }  
           }
         });
       }else{ return false};

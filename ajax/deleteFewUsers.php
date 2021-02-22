@@ -8,6 +8,16 @@
         $query = $pdo->prepare($sql);
         $query->execute([$val]);
     }
+    echo json_encode(array(
+      'result' => true,
+      'data' => 1, 
+    ));
+  }else{
+    $error = $db->errorInfo();
+    echo json_encode(array(
+      'result' => false,
+      'data' => "Couldn't delete!\n ". "SQL Error={$error[0]}, DB Error={$error[1]} " . "Message={$error[2]}\n", 
+  ));
   }
 
 ?>
